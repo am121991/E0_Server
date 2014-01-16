@@ -24,28 +24,27 @@ app.get('/', function(req, res){
 		<script src="' + jq + '"></script>\
 		<script type="text/javascript">\
 		$(document).ready(function(){\
-			$("#button").bind("click", function(){\
-				getData();\
-			});\
+			window.setInterval(getData, 1000);\
 		});\
 		function getData(){\
 			$.getJSON("http://localhost:8000/data", function(data){\
 				$("p").remove();\
-				$.each(data.items, function(i, item){\
-					$("<p>" + item + "</p>").appendTo("#info");\
-				});\
+				$("<p> Kc:" + data.kcmaster + "</p>").appendTo("#info");\
+				$("<p> BD_ADDR: " + data.admaster + "</p>").appendTo("#info");\
+				$("<p> CLK26: " + data.clmaster + "</p>").appendTo("#info");\
 			});\
 		}\
 		</script>\
 		</head>\
-		<body>Hello\
-		<input id="button" type="submit" value="fetch">\
+		<body><h1> E0 state monitoring server </h1>\
 		<div id="info"></div>\
 		</body></html>');
 });
 
 app.get('/data', function(req, res){
-	res.send('{ "items" : ["' + KCMaster + '", "' + ADMaster + '", "' + CLMaster + '"] }')
+	res.send('{ "kcmaster" : "' + KCMaster + '", ' +
+	       	'"admaster" : "' + ADMaster + '", ' +
+	       '"clmaster" : "' + CLMaster + '" }');
 });
 
 app.get('/' + jq, function(req, res){
