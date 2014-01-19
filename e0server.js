@@ -27,7 +27,7 @@ app.get('/', function(req, res){
 			window.setInterval(getData, 1000);\
 		});\
 		function getData(){\
-			$.getJSON("http://localhost:8000/data", function(data){\
+			$.getJSON("http://localhost:8000/data?callback=?", function(data){\
 				$("p").remove();\
 				$("<p> Kc:" + data.kcmaster + "</p>").appendTo("#info");\
 				$("<p> BD_ADDR: " + data.admaster + "</p>").appendTo("#info");\
@@ -42,9 +42,15 @@ app.get('/', function(req, res){
 });
 
 app.get('/data', function(req, res){
-	res.send('{ "kcmaster" : "' + KCMaster + '", ' +
-	       	'"admaster" : "' + ADMaster + '", ' +
-	       '"clmaster" : "' + CLMaster + '" }');
+	if (req.query.callback === undefined){
+		res.send(KCMaster + ", " + ADMaster + ", " + CLMaster);
+	}
+	else {
+		res.send(req.query.callback + 
+			'({ "kcmaster" : "' + KCMaster + '", ' +
+	       		'"admaster" : "' + ADMaster + '", ' +
+		       '"clmaster" : "' + CLMaster + '" });');
+	}
 });
 
 app.get('/' + jq, function(req, res){
