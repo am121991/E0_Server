@@ -15,7 +15,7 @@ var PTMaster = ""
 var KSMaster = ""
 var CTMaster = ""
 
-var CRSlave = ""
+var CTSlave = ""
 var KSSlave = ""
 var PTSlave = ""
 
@@ -32,12 +32,22 @@ app.get('/', function(req, res){
 				$("<p> Kc:" + data.kcmaster + "</p>").appendTo("#info");\
 				$("<p> BD_ADDR: " + data.admaster + "</p>").appendTo("#info");\
 				$("<p> CLK26: " + data.clmaster + "</p>").appendTo("#info");\
+				$("<p> Plain Text: " + data.ptmaster + "</p>").appendTo("#info");\
+				$("<p> Key Stream: " + data.ksmaster + "</p>").appendTo("#info");\
+				$("<p> Cipher Text: " + data.ctmaster + "</p>").appendTo("#info");\
+				$("<p> Plain Text: " + data.ptslave + "</p>").appendTo("#info");\
+				$("<p> Key Stream: " + data.ksslave + "</p>").appendTo("#info");\
+				$("<p> Cipher Text: " + data.ctslave + "</p>").appendTo("#info");\
 			});\
 		}\
 		</script>\
 		</head>\
 		<body><h1> E0 state monitoring server </h1>\
 		<div id="info"></div>\
+		<br />\
+		<div id="master"></div>\
+		<br />\
+		<div id="slave"></div>\
 		</body></html>');
 });
 
@@ -48,8 +58,14 @@ app.get('/data', function(req, res){
 	else {
 		res.send(req.query.callback + 
 			'({ "kcmaster" : "' + KCMaster + '", ' +
-	       		'"admaster" : "' + ADMaster + '", ' +
-		       '"clmaster" : "' + CLMaster + '" });');
+			'"admaster" : "' + ADMaster + '", ' +
+			'"clmaster" : "' + CLMaster + '", ' +
+			'"ptmaster" : "' + PTMaster + '", ' +
+			'"ksmaster" : "' + KSMaster + '", ' +
+			'"ctmaster" : "' + CTMaster + '", ' +
+			'"ptslave" : "' + PTSlave + '", ' +
+			'"ksslave" : "' + KSSlave + '", ' +
+			'"ctslave" : "' + CTSlave + '"});');
 	}
 });
 
@@ -70,6 +86,48 @@ app.get('/masterDetails', function(req, res){
 		ADMaster = req.query.admaster;
 		CLMaster = req.query.clmaster;
 	}
+});
+
+app.get('/plainText', function(req, res){
+	if (req.query.role === undefined || req.query.content === undefined){
+		res.send("0");
+		return;
+	}
+	else if (req.query.role === "master"){
+		PTMaster = req.query.content;
+	}
+	else {
+		PTSlave = req.query.content;
+	}
+	res.send("1");
+});
+
+app.get('/keyStream', function(req, res){
+	if (req.query.role === undefined || req.query.content === undefined){
+		res.send("0");
+		return;
+	}
+	else if (req.query.role === "master"){
+		KSMaster = req.query.content;
+	}
+	else {
+		KSSlave = req.query.content;
+	}
+	res.send("1");
+});
+
+app.get('/cipherText', function(req, res){
+	if (req.query.role === undefined || req.query.content === undefined){
+		res.send("0");
+		return;
+	}
+	else if (req.query.role === "master"){
+		CTMaster = req.query.content;
+	}
+	else {
+		CTSlave = req.query.content;
+	}
+	res.send("1");
 });
 
 app.listen(8000);
