@@ -102,8 +102,34 @@ app.get('/plainText', function(req, res){
 	res.send("1");
 });
 
+var qs = require('querystring');
+
+app.post('/keyStream', function(req, res) {
+    var body = '';
+
+    req.on('data', function (data) {
+        body += data;
+    });
+
+    req.on('end', function () {
+        var POST = qs.parse(body);
+        var keyStream = new Buffer(POST["msg"], "base64").toString("hex");
+        
+        if (req.query.role === "master") {
+            KSMaster = keyStream;
+        }
+        else if (req.query.role === "slave") {
+            KSSlave = keyStream;
+        }
+
+        console.log(keyStream)
+    });
+
+	res.send("1");
+});
+
 app.get('/keyStream', function(req, res){
-	if (req.query.role === undefined || req.query.content === undefined){
+    if (req.query.role === undefined || req.query.content === undefined){
 		res.send("0");
 		return;
 	}
