@@ -1,13 +1,15 @@
 var express = require("express");
 var request = require("request");
 var swig = require("swig");
+var qs = require('querystring');
 
 var app = express();
 var jq = 'jquery-1.7.2.js';
 
-app.get('/hello', function(req, res){
-	res.send('Hello World');
-});
+var logs = {
+    "device_1" : [],
+    "device_2" : [],
+}
 
 var KCMaster = "";
 var KCSlave = "";
@@ -63,11 +65,6 @@ app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.quer
 });
 
 app.get('/sendkc', function(req, res){
-	
-    console.log("Hello")
-
-    console.log(req.query.d1kc)
-
     if (req.query.d1kc !== undefined){
 		request.post(
 			masterUrl + "/Kc",
@@ -120,7 +117,9 @@ app.get('/data', function(req, res){
 			'"ctmaster" : "' + CTMaster + '", ' +
 			'"ptslave" : "' + PTSlave + '", ' +
 			'"ksslave" : "' + KSSlave + '", ' +
-			'"ctslave" : "' + CTSlave + '"});');
+			'"ctslave" : "' + CTSlave + '", ' +
+			'"logs" : ' + JSON.stringify(logs) + '});');
+
 	}
 });
 
@@ -143,23 +142,7 @@ app.get('/masterDetails', function(req, res){
 	}
 });
 
-app.get('/plainText', function(req, res){
-	if (req.query.role === undefined || req.query.content === undefined){
-		res.send("0");
-		return;
-	}
-	else if (req.query.role === "master"){
-		PTMaster = req.query.content;
-	}
-	else {
-		PTSlave = req.query.content;
-	}
-	res.send("1");
-});
-
-var qs = require('querystring');
-
-app.post('/keyStream', function(req, res) {
+app.post('/log', function(req, res) {
     var body = '';
 
     req.on('data', function (data) {
@@ -168,46 +151,27 @@ app.post('/keyStream', function(req, res) {
 
     req.on('end', function () {
         var POST = qs.parse(body);
-        var keyStream = new Buffer(POST["msg"], "base64").toString("hex");
-        
+    
+        var log_entry = {}    
+
+        console.log(POST)
+
+        log_entry["ciphertext"] = new Buffer(POST["ciphertext"], "base64").toString("hex");
+        log_entry["isReceiving"] = (POST["is_receiving"] == 'true')
+        log_entry["keystream"] = new Buffer(POST["keystream"], "base64").toString("hex");
+        log_entry["plaintext"] = POST["plaintext"];
+        log_entry["timestamp"] = POST["timestamp"]
+
         if (req.query.role === "master") {
-            KSMaster = keyStream;
+            logs["device_1"].push(log_entry)
         }
         else if (req.query.role === "slave") {
-            KSSlave = keyStream;
+            logs["device_2"].push(log_entry)
         }
 
-        console.log(keyStream)
+        console.log(log_entry)
     });
 
-	res.send("1");
-});
-
-app.get('/keyStream', function(req, res){
-	if (req.query.role === undefined || req.query.content === undefined){
-		res.send("0");
-		return;
-	}
-	else if (req.query.role === "master"){
-		KSMaster = req.query.content;
-	}
-	else {
-		KSSlave = req.query.content;
-	}
-	res.send("1");
-});
-
-app.get('/cipherText', function(req, res){
-	if (req.query.role === undefined || req.query.content === undefined){
-		res.send("0");
-		return;
-	}
-	else if (req.query.role === "master"){
-		CTMaster = req.query.content;
-	}
-	else {
-		CTSlave = req.query.content;
-	}
 	res.send("1");
 });
 

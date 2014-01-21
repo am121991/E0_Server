@@ -5,6 +5,32 @@
 		$(document).ready(function(){
 			window.setInterval(getData, 1000);
 		});
+
+        function add_to_log(name, log) {
+                $(name).empty();
+                var len = log.length;
+                for (var i = 0; i < len; i++) {
+                    entry = log[i];
+                    if (entry["isReceiving"]) {
+                        $(name).append(
+                            $('<li>').append(
+                                "[" + entry["timestamp"] +"]" +
+                                " Received " + entry["ciphertext"] +
+                                " decrypted as " + entry["plaintext"] +
+                                " with key stream " + entry["keystream"]
+                        ));
+                    } else {
+                        $(name).append(
+                            $('<li>').append(
+                                "[" + entry["timestamp"] +"]" +
+                                " Sent " + entry["plaintext"] +
+                                " encrypted as " + entry["ciphertext"] +
+                                " with key stream " + entry["keystream"] 
+                        ));
+                   }
+                }
+        }
+
 		function getData(){
 			$.getJSON("http://localhost:8000/data?callback=?", function(data){
 				$("#Kc_master").text(data.kcmaster);
@@ -17,12 +43,15 @@
 				$("#PT_slave").text(data.ptslave);
 				$("#KS_slave").text(data.ksslave);
 				$("#CT_slave").text(data.ctslave);
+
+                add_to_log('#master_log', data.logs["device_1"]);
+                add_to_log('#slave_log', data.logs["device_2"]);
 			});
 		}
 		</script>
 	</head>
 	<body>
-        <h1> E0 state monitoring server </h1>
+        <h1>E0 Sate Monitor</h1>
 		<form action="setAddress" method="get">
             Device 1 URL: 
                 <input type="text" name="d1url" value="{{ masterUrl }}" />
@@ -56,6 +85,18 @@
 		    <input type="hidden" name="sendee" value="slave">
 		    <input type="submit" value="send">
 		</form>
+
+        <hr />
+
+        <div id="log_master"> 
+            <h2>Master Log</h2>
+            <ul id="master_log"></ul>
+        </div>
+
+        <div id="log_slave"> 
+            <h2>Slave Log</h2>
+            <ul id="slave_log"></ul>
+        </div>
 
 		<hr />
         
