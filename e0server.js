@@ -33,6 +33,8 @@ app.get('/', function(req, res){
         'slaveUrl' : slaveUrl,
         'KCMaster' : KCMaster, 
         'KCSlave'  : KCSlave,  
+        'Kc1_len'  : KCMaster.length,  
+        'Kc2_len'  : KCSlave.length,  
     }));
 });
 

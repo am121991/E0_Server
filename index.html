@@ -7,17 +7,16 @@
 		});
 		function getData(){
 			$.getJSON("http://localhost:8000/data?callback=?", function(data){
-				$("p").remove();
-				$("<p> Master Kc:" + data.kcmaster + "</p>").appendTo("#info");
-				$("<p> Master BD_ADDR: " + data.admaster + "</p>").appendTo("#info");
-				$("<p> Master CLK26: " + data.clmaster + "</p>").appendTo("#info");
-				$("<p> Master Plain Text: " + data.ptmaster + "</p>").appendTo("#info");
-				$("<p> Master Key Stream: " + data.ksmaster + "</p>").appendTo("#info");
-				$("<p> Master Cipher Text: " + data.ctmaster + "</p>").appendTo("#info");
-				$("<p> Slave Kc:" + data.kcslave + "</p>").appendTo("#info");
-				$("<p> Slave Plain Text: " + data.ptslave + "</p>").appendTo("#info");
-				$("<p> Slave Key Stream: " + data.ksslave + "</p>").appendTo("#info");
-				$("<p> Slave Cipher Text: " + data.ctslave + "</p>").appendTo("#info");
+				$("#Kc_master").text(data.kcmaster);
+				$("#ADDR_master").text(data.admaster);
+				$("#CLK_master").text(data.clmaster);
+				$("#PT_master").text(data.ptmaster);
+				$("#KS_master").text(data.ksmaster);
+				$("#CT_master").text(data.ctmaster);
+				$("#Kc_slave").text(data.kcslave);
+				$("#PT_slave").text(data.ptslave);
+				$("#KS_slave").text(data.ksslave);
+				$("#CT_slave").text(data.ctslave);
 			});
 		}
 		</script>
@@ -25,19 +24,24 @@
 	<body>
         <h1> E0 state monitoring server </h1>
 		<form action="setAddress" method="get">
-            Device 1 URL: <input type="text" name="d1url" value="{{ masterUrl }}" /><br />
-            Device 2 URL: <input type="text" name="d2url" value="{{ slaveUrl }}" /><br />
+            Device 1 URL: 
+                <input type="text" name="d1url" value="{{ masterUrl }}" />
+                <br />    
+            Device 2 URL: 
+                <input type="text" name="d2url" value="{{ slaveUrl }}" />
+                <br />
 		    <input type="submit" value="set">
 		</form>
 		<br>
-		<form action="sendkc" method="get">
+		<form name="KcForm" action="sendkc" method="get">
             Device 1 Kc: 
             <input id="Kc1_in" type="text" size="33" name="d1kc" value="{{ KCMaster }}"
-                onkeyup="$('#Kc1_len').text(this.value.length);">
-            <span id="Kc1_len">0</span> chars<br>
-            Device 2 Kc: <input type="text" size="33" name="d2kc" value="{{ KCSlave }}"
-                onkeyup="$('#Kc2_len').text(this.value.length);">
-            <span id="Kc2_len">0</span> chars<br>
+                onkeyup="$('#Kc1_len').text(this.value.length);" />
+            <span id="Kc1_len">{{Kc1_len}}</span> chars<br>
+            Device 2 Kc: 
+            <input id="Kc2_in" type="text" size="33" name="d2kc" value="{{ KCSlave }}"
+                onkeyup="$('#Kc2_len').text(this.value.length);" />
+            <span id="Kc2_len">{{Kc2_len}}</span> chars<br>
 		    <input type="submit" value="send">
 		</form>
 		<br>
@@ -52,11 +56,24 @@
 		    <input type="hidden" name="sendee" value="slave">
 		    <input type="submit" value="send">
 		</form>
+
 		<hr />
-		<div id="info" />
-		<br>
-		<div id="master" />
-		<br>
-		<div id="slave" />
+        
+		<div id="master">
+            <p>Master Kc: <span id="Kc_master" /> </p>
+            <p>Master BD_ADDR: <span id="ADDR_master" /></p>
+            <p>Master CLK26: <span id="CLK_master" /></p>
+            <br />
+            <p>Master Plain Text: <span id="PT_master" /></p>
+            <p>Master Key Stream: <span id="KS_master" /></p>
+            <p>Master Cipher Text: <span id="CT_master" /></p>
+        </div>
+        <br />
+		<div id="slave">
+            <p>Slave Kc: <span id="Kc_slave" /></p>
+            <p>Slave Plain Text: <span id="PT_slave" /></p>
+            <p>Slave Key Stream: <span id="KS_slave" /></p>
+            <p>Slave Cipher Text: <span id="CT_slave" /></p>
+        </div>
     </body>
 </html>
