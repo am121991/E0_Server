@@ -1,5 +1,6 @@
 var express = require("express");
 var request = require("request");
+var swig = require("swig");
 
 var app = express();
 var jq = 'jquery-1.7.2.js';
@@ -26,65 +27,13 @@ var masterUrl = "";
 var slaveUrl = "";
 
 app.get('/', function(req, res){
-	res.send('<html><head> \
-		<script src="' + jq + '"></script>\
-		<script type="text/javascript">\
-		$(document).ready(function(){\
-			window.setInterval(getData, 1000);\
-		});\
-		function getData(){\
-			$.getJSON("http://localhost:8000/data?callback=?", function(data){\
-				$("p").remove();\
-				$("<p> Master Kc:" + data.kcmaster + "</p>").appendTo("#info");\
-				$("<p> Master BD_ADDR: " + data.admaster + "</p>").appendTo("#info");\
-				$("<p> Master CLK26: " + data.clmaster + "</p>").appendTo("#info");\
-				$("<p> Master Plain Text: " + data.ptmaster + "</p>").appendTo("#info");\
-				$("<p> Master Key Stream: " + data.ksmaster + "</p>").appendTo("#info");\
-				$("<p> Master Cipher Text: " + data.ctmaster + "</p>").appendTo("#info");\
-				$("<p> Slave Kc:" + data.kcslave + "</p>").appendTo("#info");\
-				$("<p> Slave Plain Text: " + data.ptslave + "</p>").appendTo("#info");\
-				$("<p> Slave Key Stream: " + data.ksslave + "</p>").appendTo("#info");\
-				$("<p> Slave Cipher Text: " + data.ctslave + "</p>").appendTo("#info");\
-			});\
-		}\
-		</script>\
-		</head>\
-		<body><h1> E0 state monitoring server </h1>\
-		<form action="setAddress" method="get">\
-		Device 1 URL: <input type="text" name="d1url" value="' + masterUrl + '" /><br />\
-		Device 2 URL: <input type="text" name="d2url" value="' + slaveUrl + '" /><br />\
-		<input type="submit" value="set">\
-		</form>\
-		<br>\
-		<form action="sendkc" method="get">\
-		Device 1 Kc: <input id="Kc1_in" type="text" size="33" name="d1kc" value="' + KCMaster +'" \
-        onkeyup="$(\'#Kc1_len\').text(this.value.length);">\
-        <span id="Kc1_len">0</span> chars<br>\
-		Device 2 Kc: <input type="text" size="33" name="d2kc" value="' + KCSlave  +'"\
-        onkeyup="$(\'#Kc2_len\').text(this.value.length);">\
-        <span id="Kc2_len">0</span> chars<br>\
-		<input type="submit" value="send">\
-		</form>\
-		<br>\
-		<form action="sendPT" method="get">\
-		Device 1 plaintext: <input type="text" name="pt"><br>\
-		<input type="hidden" name="sendee" value="master">\
-		<input type="submit" value="send">\
-		</form>\
-		<br>\
-		<form action="sendPT" method="get">\
-		Device 2 plaintext: <input type="text" name="pt"><br>\
-		<input type="hidden" name="sendee" value="slave">\
-		<input type="submit" value="send">\
-		</form>\
-		<hr>\
-		<div id="info"></div>\
-		<br>\
-		<div id="master"></div>\
-		<br>\
-		<div id="slave"></div>\
-		</body></html>'
-	);
+    res.send(swig.renderFile(__dirname + '/index.html', {
+        'jq' : jq, 
+        'masterUrl' : masterUrl,
+        'slaveUrl' : slaveUrl,
+        'KCMaster' : KCMaster, 
+        'KCSlave'  : KCSlave,  
+    }));
 });
 
 app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.query.pt based on req.query.sendee
