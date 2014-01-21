@@ -1,4 +1,5 @@
 var express = require("express");
+var request = require("request");
 
 var app = express();
 var jq = 'jquery-1.7.2.js';
@@ -80,11 +81,52 @@ app.get('/', function(req, res){
 });
 
 app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.query.pt based on req.query.sendee
-	console.log(req.query);
+	var url = "";
+	if (req.query.pt !== undefined){
+		if (req.query.sendee === "master"){
+			url = masterUrl;
+		}
+		else if (req.query.sendee === "slave"){
+			url = slaveUrl;
+		}
+		if (url !== ""){
+			request.post(
+				url + "/", //TODO fix url
+				{form: {plaintext: req.query.pt}}, //TODO fix form structure
+				function (error, response, body){
+					if (!error && statusCode == 200){
+						console.log(body);
+					}
+				}
+			);
+		}
+	}
 	res.redirect("http://localhost:8000");
 });
 
-app.get('/sendkc', function(req, res){ //TODO send data to clients i.e. req.query.d1kc & d2kc
+app.get('/sendkc', function(req, res){
+	if (req.query.d1kn !== undefined){
+		request.post(
+			masterUrl + "/", //TODO fix url
+			{ form: {kc: req.query.d1kc}}, //TODO fix form structure
+			function (error, response, body){
+				if (!error && statusCode == 200){
+					console.log(body);
+				}
+			}
+		);
+	}
+	if (req.query.d2kn !== undefined){
+		request.post(
+			slaveUrl + "/", //TODO fix url
+			{ form: {kc: req.query.d1kc}}, //TODO fix form structure
+			function (error, response, body){
+				if (!error && statusCode == 200){
+					console.log(body);
+				}
+			}
+		);
+	}
 	res.redirect("http://localhost:8000");
 });
 
