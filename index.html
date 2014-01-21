@@ -31,29 +31,20 @@
                 }
         }
 
-        function add_to_chat(dev_1_name, dev_2_name, log) {
-                $(dev_1_name).empty();
-                $(dev_2_name).empty();
+        function add_to_chat(name, log) {
+                $(name).empty();
                 var len = log.length;
                 for (var i = 0; i < len; i++) {
                     entry = log[i];
                     if (entry["isReceiving"]) {
-                        $(dev_1_name).append(
+                        $(name).append(
                             $('<li>').append(
                                 "Him: " + entry["plaintext"] 
-                        ));
-                        $(dev_2_name).append(
-                            $('<li>').append(
-                                "Me: " + entry["plaintext"] 
                         ));
                     } else {
-                        $(dev_1_name).append(
+                        $(name).append(
                             $('<li>').append(
                                 "Me: " + entry["plaintext"] 
-                        ));
-                        $(dev_2_name).append(
-                            $('<li>').append(
-                                "Him: " + entry["plaintext"] 
                         ));
                    }
                 }
@@ -75,7 +66,8 @@
                 add_to_log('#master_log', data.logs["device_1"]);
                 add_to_log('#slave_log', data.logs["device_2"]);
 
-                add_to_chat('#master_chat', '#slave_chat', data.logs["device_1"]);
+                add_to_chat('#master_chat', data.logs["device_1"]);
+                add_to_chat('#slave_chat',  data.logs["device_2"]);
 			});
 		}
 		</script>
