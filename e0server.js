@@ -51,14 +51,18 @@ app.get('/', function(req, res){
 		</head>\
 		<body><h1> E0 state monitoring server </h1>\
 		<form action="setAddress" method="get">\
-		Device 1 URL: <input type="text" name="d1url" value="' + masterUrl + '"><br>\
-		Device 2 URL: <input type="text" name="d2url" value="' + slaveUrl + '"><br>\
+		Device 1 URL: <input type="text" name="d1url" value="' + masterUrl + '" /><br />\
+		Device 2 URL: <input type="text" name="d2url" value="' + slaveUrl + '" /><br />\
 		<input type="submit" value="set">\
 		</form>\
 		<br>\
 		<form action="sendkc" method="get">\
-		Device 1 Kc: <input type="text" name="d1kc" value="' + KCMaster +'"><br>\
-		Device 2 kc: <input type="text" name="d2kc" value="' + KCSlave  +'"><br>\
+		Device 1 Kc: <input id="Kc1_in" type="text" size="33" name="d1kc" value="' + KCMaster +'" \
+        onkeyup="$(\'#Kc1_len\').text(this.value.length);">\
+        <span id="Kc1_len">0</span> chars<br>\
+		Device 2 Kc: <input type="text" size="33" name="d2kc" value="' + KCSlave  +'"\
+        onkeyup="$(\'#Kc2_len\').text(this.value.length);">\
+        <span id="Kc2_len">0</span> chars<br>\
 		<input type="submit" value="send">\
 		</form>\
 		<br>\
@@ -95,9 +99,9 @@ app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.quer
 		if (url !== ""){
 			request.post(
 				url + "/message",
-				{form: {plaintext: req.query.pt}},
+				{form: {"plaintext": req.query.pt}},
 				function (error, response, body){
-					if (!error && statusCode == 200){
+					if (!error && response.statusCode == 200){
 						console.log(body);
 					}
 				}
@@ -128,7 +132,7 @@ app.get('/sendkc', function(req, res){
 	if (req.query.d2kc !== undefined){
 		request.post(
 			slaveUrl + "/Kc",
-			{ form: {"Kc": req.query.d1kc}},
+			{ form: {"Kc": req.query.d2kc}},
 			function (error, response, body){
 				if (!error && response.statusCode == 200){
 					console.log(body);
