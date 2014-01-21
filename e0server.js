@@ -60,13 +60,13 @@ app.get('/', function(req, res){
 		</form>\
 		<br>\
 		<form action="sendPT" method="get">\
-		Device 1 Kc: <input type="text" name="pt"><br>\
+		Device 1 plaintext: <input type="text" name="pt"><br>\
 		<input type="hidden" name="sendee" value="master">\
 		<input type="submit" value="send">\
 		</form>\
 		<br>\
 		<form action="sendPT" method="get">\
-		Device 1 Kc: <input type="text" name="pt"><br>\
+		Device 2 plaintext: <input type="text" name="pt"><br>\
 		<input type="hidden" name="sendee" value="slave">\
 		<input type="submit" value="send">\
 		</form>\
