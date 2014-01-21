@@ -31,6 +31,34 @@
                 }
         }
 
+        function add_to_chat(dev_1_name, dev_2_name, log) {
+                $(dev_1_name).empty();
+                $(dev_2_name).empty();
+                var len = log.length;
+                for (var i = 0; i < len; i++) {
+                    entry = log[i];
+                    if (entry["isReceiving"]) {
+                        $(dev_1_name).append(
+                            $('<li>').append(
+                                "Him: " + entry["plaintext"] 
+                        ));
+                        $(dev_2_name).append(
+                            $('<li>').append(
+                                "Me: " + entry["plaintext"] 
+                        ));
+                    } else {
+                        $(dev_1_name).append(
+                            $('<li>').append(
+                                "Me: " + entry["plaintext"] 
+                        ));
+                        $(dev_2_name).append(
+                            $('<li>').append(
+                                "Him: " + entry["plaintext"] 
+                        ));
+                   }
+                }
+        }
+
 		function getData(){
 			$.getJSON("http://localhost:8000/data?callback=?", function(data){
 				$("#Kc_master").text(data.kcmaster);
@@ -46,6 +74,8 @@
 
                 add_to_log('#master_log', data.logs["device_1"]);
                 add_to_log('#slave_log', data.logs["device_2"]);
+
+                add_to_chat('#master_chat', '#slave_chat', data.logs["device_1"]);
 			});
 		}
 		</script>
@@ -73,21 +103,33 @@
             <span id="Kc2_len">{{Kc2_len}}</span> chars<br>
 		    <input type="submit" value="send">
 		</form>
-		<br>
+        
+        <hr />
+        
+        <div id="chat_master"> 
+            <h2>Master Chat</h2>
+            <ul id="master_chat"></ul>
+        </div>
+
         <form action="sendPT" method="get">
 		    Device 1 plaintext: <input type="text" name="pt"><br>
 		    <input type="hidden" name="sendee" value="master">
 		    <input type="submit" value="send">
 		</form>
-		<br>
-		<form action="sendPT" method="get">
+        
+        <div id="chat_slave"> 
+            <h2>Slave Chat</h2>
+            <ul id="slave_chat"></ul>
+        </div>
+        
+        <form action="sendPT" method="get">
 		    Device 2 plaintext: <input type="text" name="pt"><br>
 		    <input type="hidden" name="sendee" value="slave">
 		    <input type="submit" value="send">
 		</form>
 
         <hr />
-
+            
         <div id="log_master"> 
             <h2>Master Log</h2>
             <ul id="master_log"></ul>
