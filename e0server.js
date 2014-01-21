@@ -91,8 +91,8 @@ app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.quer
 		}
 		if (url !== ""){
 			request.post(
-				url + "/", //TODO fix url
-				{form: {plaintext: req.query.pt}}, //TODO fix form structure
+				url + "/message",
+				{form: {plaintext: req.query.pt}},
 				function (error, response, body){
 					if (!error && statusCode == 200){
 						console.log(body);
@@ -107,8 +107,8 @@ app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.quer
 app.get('/sendkc', function(req, res){
 	if (req.query.d1kn !== undefined){
 		request.post(
-			masterUrl + "/", //TODO fix url
-			{ form: {kc: req.query.d1kc}}, //TODO fix form structure
+			masterUrl + "/Kc",
+			{ form: {kc: req.query.d1kc}},
 			function (error, response, body){
 				if (!error && statusCode == 200){
 					console.log(body);
@@ -118,8 +118,8 @@ app.get('/sendkc', function(req, res){
 	}
 	if (req.query.d2kn !== undefined){
 		request.post(
-			slaveUrl + "/", //TODO fix url
-			{ form: {kc: req.query.d1kc}}, //TODO fix form structure
+			slaveUrl + "/",
+			{ form: {kc: req.query.d1kc}},
 			function (error, response, body){
 				if (!error && statusCode == 200){
 					console.log(body);
