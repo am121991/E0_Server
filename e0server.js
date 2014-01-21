@@ -7,17 +7,20 @@ app.get('/hello', function(req, res){
 	res.send('Hello World');
 });
 
-var KCMaster = ""
-var ADMaster = ""
-var CLMaster = ""
+var KCMaster = "";
+var ADMaster = "";
+var CLMaster = "";
 
-var PTMaster = ""
-var KSMaster = ""
-var CTMaster = ""
+var PTMaster = "";
+var KSMaster = "";
+var CTMaster = "";
 
-var CTSlave = ""
-var KSSlave = ""
-var PTSlave = ""
+var CTSlave = "";
+var KSSlave = "";
+var PTSlave = "";
+
+var masterUrl = "";
+var slaveUrl = "";
 
 app.get('/', function(req, res){
 	res.send('<html><head> \
@@ -43,12 +46,56 @@ app.get('/', function(req, res){
 		</script>\
 		</head>\
 		<body><h1> E0 state monitoring server </h1>\
+		<form action="setAddress" method="get">\
+		Device 1 URL: <input type="text" name="d1url" value="' + masterUrl + '"><br>\
+		Device 2 URL: <input type="text" name="d2url" value="' + slaveUrl + '"><br>\
+		<input type="submit" value="set">\
+		</form>\
+		<br>\
+		<form action="sendkc" method="get">\
+		Device 1 Kc: <input type="text" name="d1kc"><br>\
+		Device 2 kc: <input type="text" name="d2kc"><br>\
+		<input type="submit" value="send">\
+		</form>\
+		<br>\
+		<form action="sendPT" method="get">\
+		Device 1 Kc: <input type="text" name="pt"><br>\
+		<input type="hidden" name="sendee" value="master">\
+		<input type="submit" value="send">\
+		</form>\
+		<br>\
+		<form action="sendPT" method="get">\
+		Device 1 Kc: <input type="text" name="pt"><br>\
+		<input type="hidden" name="sendee" value="slave">\
+		<input type="submit" value="send">\
+		</form>\
+		<hr>\
 		<div id="info"></div>\
-		<br />\
+		<br>\
 		<div id="master"></div>\
-		<br />\
+		<br>\
 		<div id="slave"></div>\
-		</body></html>');
+		</body></html>'
+	);
+});
+
+app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.query.pt based on req.query.sendee
+	console.log(req.query);
+	res.redirect("http://localhost:8000");
+});
+
+app.get('/sendkc', function(req, res){ //TODO send data to clients i.e. req.query.d1kc & d2kc
+	res.redirect("http://localhost:8000");
+});
+
+app.get('/setAddress', function(req,res){
+	if (req.query.d1url !== undefined){
+		masterUrl = req.query.d1url;
+	}
+	if (req.query.d2url !== undefined){
+		slaveUrl = req.query.d2url;
+	}
+	res.redirect("http://localhost:8000");
 });
 
 app.get('/data', function(req, res){
@@ -129,7 +176,7 @@ app.post('/keyStream', function(req, res) {
 });
 
 app.get('/keyStream', function(req, res){
-    if (req.query.role === undefined || req.query.content === undefined){
+	if (req.query.role === undefined || req.query.content === undefined){
 		res.send("0");
 		return;
 	}
