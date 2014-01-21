@@ -9,6 +9,8 @@ app.get('/hello', function(req, res){
 });
 
 var KCMaster = "";
+var KCSlave = "";
+
 var ADMaster = "";
 var CLMaster = "";
 
@@ -33,15 +35,16 @@ app.get('/', function(req, res){
 		function getData(){\
 			$.getJSON("http://localhost:8000/data?callback=?", function(data){\
 				$("p").remove();\
-				$("<p> Kc:" + data.kcmaster + "</p>").appendTo("#info");\
-				$("<p> BD_ADDR: " + data.admaster + "</p>").appendTo("#info");\
-				$("<p> CLK26: " + data.clmaster + "</p>").appendTo("#info");\
-				$("<p> Plain Text: " + data.ptmaster + "</p>").appendTo("#info");\
-				$("<p> Key Stream: " + data.ksmaster + "</p>").appendTo("#info");\
-				$("<p> Cipher Text: " + data.ctmaster + "</p>").appendTo("#info");\
-				$("<p> Plain Text: " + data.ptslave + "</p>").appendTo("#info");\
-				$("<p> Key Stream: " + data.ksslave + "</p>").appendTo("#info");\
-				$("<p> Cipher Text: " + data.ctslave + "</p>").appendTo("#info");\
+				$("<p> Master Kc:" + data.kcmaster + "</p>").appendTo("#info");\
+				$("<p> Master BD_ADDR: " + data.admaster + "</p>").appendTo("#info");\
+				$("<p> Master CLK26: " + data.clmaster + "</p>").appendTo("#info");\
+				$("<p> Master Plain Text: " + data.ptmaster + "</p>").appendTo("#info");\
+				$("<p> Master Key Stream: " + data.ksmaster + "</p>").appendTo("#info");\
+				$("<p> Master Cipher Text: " + data.ctmaster + "</p>").appendTo("#info");\
+				$("<p> Slave Kc:" + data.kcslave + "</p>").appendTo("#info");\
+				$("<p> Slave Plain Text: " + data.ptslave + "</p>").appendTo("#info");\
+				$("<p> Slave Key Stream: " + data.ksslave + "</p>").appendTo("#info");\
+				$("<p> Slave Cipher Text: " + data.ctslave + "</p>").appendTo("#info");\
 			});\
 		}\
 		</script>\
@@ -54,8 +57,8 @@ app.get('/', function(req, res){
 		</form>\
 		<br>\
 		<form action="sendkc" method="get">\
-		Device 1 Kc: <input type="text" name="d1kc"><br>\
-		Device 2 kc: <input type="text" name="d2kc"><br>\
+		Device 1 Kc: <input type="text" name="d1kc" value="' + KCMaster +'"><br>\
+		Device 2 kc: <input type="text" name="d2kc" value="' + KCSlave  +'"><br>\
 		<input type="submit" value="send">\
 		</form>\
 		<br>\
@@ -105,27 +108,34 @@ app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.quer
 });
 
 app.get('/sendkc', function(req, res){
-	if (req.query.d1kn !== undefined){
+	
+    console.log("Hello")
+
+    console.log(req.query.d1kc)
+
+    if (req.query.d1kc !== undefined){
 		request.post(
 			masterUrl + "/Kc",
-			{ form: {kc: req.query.d1kc}},
+			{ form: {"Kc": req.query.d1kc}},
 			function (error, response, body){
-				if (!error && statusCode == 200){
+				if (!error && response.statusCode == 200){
 					console.log(body);
 				}
 			}
 		);
+        KCMaster = req.query.d1kc;
 	}
-	if (req.query.d2kn !== undefined){
+	if (req.query.d2kc !== undefined){
 		request.post(
-			slaveUrl + "/",
-			{ form: {kc: req.query.d1kc}},
+			slaveUrl + "/Kc",
+			{ form: {"Kc": req.query.d1kc}},
 			function (error, response, body){
-				if (!error && statusCode == 200){
+				if (!error && response.statusCode == 200){
 					console.log(body);
 				}
 			}
 		);
+        KCSlave = req.query.d2kc;
 	}
 	res.redirect("http://localhost:8000");
 });
@@ -147,6 +157,7 @@ app.get('/data', function(req, res){
 	else {
 		res.send(req.query.callback + 
 			'({ "kcmaster" : "' + KCMaster + '", ' +
+			'"kcslave" : "' + KCSlave + '", ' +
 			'"admaster" : "' + ADMaster + '", ' +
 			'"clmaster" : "' + CLMaster + '", ' +
 			'"ptmaster" : "' + PTMaster + '", ' +
