@@ -11,6 +11,8 @@ var logs = {
     "device_2" : [],
 }
 
+var port = 8000;
+
 var KCMaster = "";
 var KCSlave = "";
 
@@ -98,7 +100,7 @@ app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.quer
     if (req.query.silent !== undefined) {
         res.send(req.query.sendee + ": " + req.query.pt);
     } else {
-        res.redirect("http://localhost:8000");
+        res.redirect("http://localhost:" + port);
     }
 });
 
@@ -131,7 +133,7 @@ app.get('/sendkc', function(req, res){
         res.send("Slave:  " + KCSlave + "\n" 
                + "Master: " + KCMaster);
     } else {
-        res.redirect("http://localhost:8000");
+        res.redirect("http://localhost:" + port);
     }
 });
 
@@ -180,7 +182,7 @@ app.get('/setAddress', function(req,res){
         res.send("Slave:  " + slaveUrl + "\n" 
                + "Master: " + masterUrl);
     } else {
-        res.redirect("http://localhost:8000");
+        res.redirect("http://localhost:" + port);
     }
 });
 
@@ -239,5 +241,5 @@ app.post('/log', function(req, res) {
 	res.send("1");
 });
 
-app.listen(8000);
+app.listen(port);
 console.log('Listening');
