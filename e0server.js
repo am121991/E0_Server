@@ -15,6 +15,7 @@ var KCMaster = "";
 var KCSlave = "";
 
 var ADMaster = "";
+var ADSlave = "";
 var CLMaster = "";
 
 var PTMaster = "";
@@ -179,21 +180,6 @@ app.get('/' + jq, function(req, res){
 	res.sendfile('./' + jq);
 });
 
-app.get('/masterDetails', function(req, res){
-	if (req.query.kcmaster === undefined)
-		res.send("error: kcmaster");
-	else if (req.query.admaster === undefined)
-		res.send("error: admaster");
-	else if (req.query.clmaster === undefined)
-		res.send("error: clmaster");
-	else {
-		res.send("1");
-		KCMaster = req.query.kcmaster;
-		ADMaster = req.query.admaster;
-		CLMaster = req.query.clmaster;
-	}
-});
-
 app.post('/log', function(req, res) {
     var body = '';
 
@@ -213,13 +199,13 @@ app.post('/log', function(req, res) {
 
         if (req.query.role === "master") {
             logs["device_1"].push(log_entry);
-        }
-        else if (req.query.role === "slave") {
+            //XXX: This is not scheme dummy
+            CLMaster = (parseInt("0x" + (new Buffer(POST["CLK"], "utf-8").toString("hex"))));
+            ADMaster = POST["BD_ADDR"];
+        } else if (req.query.role === "slave") {
             logs["device_2"].push(log_entry);
+            ADSlave = POST["BD_ADDR"];;
         }
-
-        //XXX: This is not scheme dummy
-        CLMaster = (parseInt("0x" + (new Buffer(POST["CLK"], "utf-8").toString("hex"))));
     });
 
 	res.send("1");
