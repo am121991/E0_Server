@@ -28,11 +28,16 @@ var PTSlave = "";
 var masterUrl = "";
 var slaveUrl = "";
 
+var url1 = "";
+var url2 = "";
+
 app.get('/', function(req, res){
     res.send(swig.renderFile(__dirname + '/index.html', {
         'jq' : jq, 
         'masterUrl' : masterUrl,
         'slaveUrl' : slaveUrl,
+        'device_1_Url' : url1,
+        'device_2_Url' : url2,
         'KCMaster' : KCMaster, 
         'KCSlave'  : KCSlave,  
         'Kc1_len'  : KCMaster.length,  
@@ -61,7 +66,11 @@ app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.quer
 			);
 		}
 	}
-	res.redirect("http://localhost:8000");
+    if (req.query.silent !== undefined) {
+        res.send(req.query.sendee + ": " + req.query.pt);
+    } else {
+        res.redirect("http://localhost:8000");
+    }
 });
 
 app.get('/sendkc', function(req, res){
@@ -89,17 +98,61 @@ app.get('/sendkc', function(req, res){
 		);
         KCSlave = req.query.d2kc;
 	}
-	res.redirect("http://localhost:8000");
+    if (req.query.silent !== undefined) {
+        res.send("Slave:  " + KCSlave + "\n" 
+               + "Master: " + KCMaster);
+    } else {
+        res.redirect("http://localhost:8000");
+    }
 });
 
 app.get('/setAddress', function(req,res){
-	if (req.query.d1url !== undefined){
-		masterUrl = req.query.d1url;
+	if (req.query.d1url !== undefined) {
+		if ((req.query.d1url.substr(0, 16) !== "http://127.0.0.1")
+            || (req.query.d1url.substr(0, 16) !== "http://localhost")){
+            url1 = "http://127.0.0.1" + req.query.d1url;
+        } else if (req.query.d1url.substr(0, 7) !== "http://") {
+            url1 = "http://" + req.query.d1url;
+        } else {
+            url1 = req.query.d1url;
+        }
+
+        request(url1 + "/isMaster", function(error, response, body) {
+            console.log(body); 
+            if (body === "true") {
+                masterUrl = url1;
+            } else {
+                slaveUrl = url1;
+            }
+        });
 	}
-	if (req.query.d2url !== undefined){
-		slaveUrl = req.query.d2url;
+
+	if (req.query.d2url !== undefined) {
+        if ((req.query.d2url.substr(0, 16) !== "http://127.0.0.1")
+            || (req.query.d2url.substr(0, 16) !== "http://localhost")){
+            url2 = "http://127.0.0.1" + req.query.d2url;
+        } else if (req.query.d2url.substr(0, 7) !== "http://") {
+            url2 = "http://" + req.query.d2url;
+        } else {
+            url2 = req.query.d2url;
+        }
+
+        request(url2 + "/isMaster", function(error, response, body) {
+            console.log(body); 
+            if (body === "true") {
+                masterUrl = url2;
+            } else {
+                slaveUrl = url2;
+            }
+        });
 	}
-	res.redirect("http://localhost:8000");
+
+	if (req.query.silent !== undefined) {
+        res.send("Slave:  " + slaveUrl + "\n" 
+               + "Master: " + masterUrl);
+    } else {
+        res.redirect("http://localhost:8000");
+    }
 });
 
 app.get('/data', function(req, res){
@@ -119,7 +172,6 @@ app.get('/data', function(req, res){
 			'"ksslave" : "' + KSSlave + '", ' +
 			'"ctslave" : "' + CTSlave + '", ' +
 			'"logs" : ' + JSON.stringify(logs) + '});');
-
 	}
 });
 
@@ -153,23 +205,21 @@ app.post('/log', function(req, res) {
         var POST = qs.parse(body);
     
         var log_entry = {}    
-
-        console.log(POST)
-
         log_entry["ciphertext"] = new Buffer(POST["ciphertext"], "base64").toString("hex");
         log_entry["isReceiving"] = (POST["is_receiving"] == 'true')
         log_entry["keystream"] = new Buffer(POST["keystream"], "base64").toString("hex");
         log_entry["plaintext"] = POST["plaintext"];
-        log_entry["timestamp"] = POST["timestamp"]
+        log_entry["timestamp"] = POST["timestamp"];
 
         if (req.query.role === "master") {
-            logs["device_1"].push(log_entry)
+            logs["device_1"].push(log_entry);
         }
         else if (req.query.role === "slave") {
-            logs["device_2"].push(log_entry)
+            logs["device_2"].push(log_entry);
         }
 
-        console.log(log_entry)
+        //XXX: This is not scheme dummy
+        CLMaster = (parseInt("0x" + (new Buffer(POST["CLK"], "utf-8").toString("hex"))));
     });
 
 	res.send("1");

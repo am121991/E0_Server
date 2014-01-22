@@ -1,5 +1,7 @@
+<!doctype html>
 <html>
     <head> 
+        <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type">
         <script src="{{ jq }}"></script>
 		<script type="text/javascript">
 		$(document).ready(function(){
@@ -7,47 +9,82 @@
 		});
 
         function add_to_log(name, log) {
-                $(name).empty();
-                var len = log.length;
-                for (var i = 0; i < len; i++) {
-                    entry = log[i];
-                    if (entry["isReceiving"]) {
-                        $(name).append(
-                            $('<li>').append(
-                                "[" + entry["timestamp"] +"]" +
-                                " Received " + entry["ciphertext"] +
-                                " decrypted as " + entry["plaintext"] +
-                                " with key stream " + entry["keystream"]
-                        ));
-                    } else {
-                        $(name).append(
-                            $('<li>').append(
-                                "[" + entry["timestamp"] +"]" +
-                                " Sent " + entry["plaintext"] +
-                                " encrypted as " + entry["ciphertext"] +
-                                " with key stream " + entry["keystream"] 
-                        ));
-                   }
-                }
+            $(name).empty();
+            var len = log.length;
+            for (var i = 0; i < len; i++) {
+                entry = log[i];
+                if (entry["isReceiving"]) {
+                    $(name).append(
+                        $('<li>').append(
+                            "[" + entry["timestamp"] +"]" +
+                            " Received \"" + entry["ciphertext"] + 
+                            "\" decrypted as \"" + entry["plaintext"] +
+                            "\" with key stream \"" + entry["keystream"] + "\""
+                    ));
+                } else {
+                    $(name).append(
+                        $('<li>').append(
+                            "[" + entry["timestamp"] +"]" +
+                            " Sent \"" + entry["plaintext"] +
+                            "\" encrypted as \"" + entry["ciphertext"] +
+                            "\" with key stream \"" + entry["keystream"] + "\""
+                    ));
+               }
+            }
         }
 
         function add_to_chat(name, log) {
-                $(name).empty();
-                var len = log.length;
-                for (var i = 0; i < len; i++) {
-                    entry = log[i];
-                    if (entry["isReceiving"]) {
-                        $(name).append(
-                            $('<li>').append(
-                                "Him: " + entry["plaintext"] 
-                        ));
-                    } else {
-                        $(name).append(
-                            $('<li>').append(
-                                "Me: " + entry["plaintext"] 
-                        ));
-                   }
-                }
+            $(name).empty();
+            var len = log.length;
+            for (var i = 0; i < len; i++) {
+                entry = log[i];
+                if (entry["isReceiving"]) {
+                    $(name).append(
+                        $('<li>').append(
+                            "Him: " + entry["plaintext"] 
+                    ));
+                } else {
+                    $(name).append(
+                        $('<li>').append(
+                            "Me: " + entry["plaintext"] 
+                    ));
+               }
+            }
+        }
+
+        function setAddress(url, device) {
+            $.ajax({
+                type : "GET",
+                url  : "setAddress?silent&" + device + "=" + url,
+                cache: false,
+                })
+            .done(function(msg) {
+                    console.log("Done \n" + msg);
+                });
+        }
+
+        function setKc(Kc, device) {
+            $.ajax({
+                type : "GET",
+                url  : "sendkc?silent&" + device + "=" + Kc,
+                cache: false,
+                })
+            .done(function(msg) {
+                    console.log("Done \n" + msg);
+                });
+        }
+
+        function sendMessage(message_input, device) {
+            $.ajax({
+                type : "GET",
+                url  : "sendPT?silent&sendee=" + device + 
+                    "&pt=" + message_input.value,
+                cache: false,
+                })
+            .done(function(msg) {
+                    console.log("Done \n" + msg);
+                });
+            message_input.value = "";
         }
 
 		function getData(){
@@ -74,51 +111,49 @@
 	</head>
 	<body>
         <h1>E0 Sate Monitor</h1>
-		<form action="setAddress" method="get">
             Device 1 URL: 
-                <input type="text" name="d1url" value="{{ masterUrl }}" />
+                <input type="text" name="d1url" size="33" value="{{ device_1_Url }}" 
+                    onchange="setAddress(this.value, 'd1url');"/>
                 <br />    
             Device 2 URL: 
-                <input type="text" name="d2url" value="{{ slaveUrl }}" />
+                <input type="text" name="d2url" size="33" value="{{ device_2_Url }}" 
+                    onchange="setAddress(this.value, 'd2url');" />
                 <br />
-		    <input type="submit" value="set">
-		</form>
 		<br>
-		<form name="KcForm" action="sendkc" method="get">
             Device 1 Kc: 
             <input id="Kc1_in" type="text" size="33" name="d1kc" value="{{ KCMaster }}"
-                onkeyup="$('#Kc1_len').text(this.value.length);" />
+                onkeyup="$('#Kc1_len').text(this.value.length);" 
+                onchange="setKc(this.value, 'd1kc');"/>
             <span id="Kc1_len">{{Kc1_len}}</span> chars<br>
             Device 2 Kc: 
             <input id="Kc2_in" type="text" size="33" name="d2kc" value="{{ KCSlave }}"
-                onkeyup="$('#Kc2_len').text(this.value.length);" />
+                onkeyup="$('#Kc2_len').text(this.value.length);" 
+                onchange="setKc(this.value, 'd2kc');"/>
             <span id="Kc2_len">{{Kc2_len}}</span> chars<br>
-		    <input type="submit" value="send">
-		</form>
         
         <hr />
         
         <div id="chat_master"> 
             <h2>Master Chat</h2>
             <ul id="master_chat"></ul>
+            Device 1 plaintext: 
+            <input id="dev1_msg" type="text"
+                onkeydown="if (event.keyCode == 13) {sendMessage(this, 'master');}"/>
+            <button id="dev1_msg_button" type="button" 
+                onclick="sendMessage($('#dev1_msg')[0], 'master');">
+                Send</button>
         </div>
-
-        <form action="sendPT" method="get">
-		    Device 1 plaintext: <input type="text" name="pt"><br>
-		    <input type="hidden" name="sendee" value="master">
-		    <input type="submit" value="send">
-		</form>
         
         <div id="chat_slave"> 
             <h2>Slave Chat</h2>
             <ul id="slave_chat"></ul>
+            Device 2 plaintext: 
+            <input id="dev2_msg" type="text"
+                onkeydown="if (event.keyCode == 13) {sendMessage(this, 'slave');}"/>
+            <button id="dev2_msg_button" type="button" 
+                onclick="sendMessage($('#dev2_msg')[0], 'slave');">
+                Send</button>
         </div>
-        
-        <form action="sendPT" method="get">
-		    Device 2 plaintext: <input type="text" name="pt"><br>
-		    <input type="hidden" name="sendee" value="slave">
-		    <input type="submit" value="send">
-		</form>
 
         <hr />
             
