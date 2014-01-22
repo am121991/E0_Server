@@ -115,22 +115,12 @@
                 <input type="text" name="d1url" size="33" value="{{ device_1_Url }}" 
                     onchange="setAddress(this.value, 'd1url');"/>
                 <br />    
-            Device 2 URL: 
-                <input type="text" name="d2url" size="33" value="{{ device_2_Url }}" 
-                    onchange="setAddress(this.value, 'd2url');" />
-                <br />
 		<br>
             Device 1 Kc: 
             <input id="Kc1_in" type="text" size="33" name="d1kc" value="{{ KCMaster }}"
                 onkeyup="$('#Kc1_len').text(this.value.length);" 
                 onchange="setKc(this.value, 'd1kc');"/>
             <span id="Kc1_len">{{Kc1_len}}</span> chars<br>
-            Device 2 Kc: 
-            <input id="Kc2_in" type="text" size="33" name="d2kc" value="{{ KCSlave }}"
-                onkeyup="$('#Kc2_len').text(this.value.length);" 
-                onchange="setKc(this.value, 'd2kc');"/>
-            <span id="Kc2_len">{{Kc2_len}}</span> chars<br>
-        
         <hr />
         
         <div id="chat_master"> 
@@ -144,27 +134,11 @@
                 Send</button>
         </div>
         
-        <div id="chat_slave"> 
-            <h2>Slave Chat</h2>
-            <ul id="slave_chat"></ul>
-            Device 2 plaintext: 
-            <input id="dev2_msg" type="text"
-                onkeydown="if (event.keyCode == 13) {sendMessage(this, 'slave');}"/>
-            <button id="dev2_msg_button" type="button" 
-                onclick="sendMessage($('#dev2_msg')[0], 'slave');">
-                Send</button>
-        </div>
-
         <hr />
             
         <div id="log_master"> 
             <h2>Master Log</h2>
             <ul id="master_log"></ul>
-        </div>
-
-        <div id="log_slave"> 
-            <h2>Slave Log</h2>
-            <ul id="slave_log"></ul>
         </div>
 
 		<hr />

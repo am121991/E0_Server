@@ -46,6 +46,34 @@ app.get('/', function(req, res){
     }));
 });
 
+app.get('/slave', function(req, res){
+    res.send(swig.renderFile(__dirname + '/slave.html', {
+        'jq' : jq, 
+        'masterUrl' : masterUrl,
+        'slaveUrl' : slaveUrl,
+        'device_1_Url' : url1,
+        'device_2_Url' : url2,
+        'KCMaster' : KCMaster, 
+        'KCSlave'  : KCSlave,  
+        'Kc1_len'  : KCMaster.length,  
+        'Kc2_len'  : KCSlave.length,  
+    }));
+});
+
+app.get('/master', function(req, res){
+    res.send(swig.renderFile(__dirname + '/master.html', {
+        'jq' : jq, 
+        'masterUrl' : masterUrl,
+        'slaveUrl' : slaveUrl,
+        'device_1_Url' : url1,
+        'device_2_Url' : url2,
+        'KCMaster' : KCMaster, 
+        'KCSlave'  : KCSlave,  
+        'Kc1_len'  : KCMaster.length,  
+        'Kc2_len'  : KCSlave.length,  
+    }));
+});
+
 app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.query.pt based on req.query.sendee
 	var url = "";
 	if (req.query.pt !== undefined){
