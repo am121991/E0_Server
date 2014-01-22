@@ -26,17 +26,17 @@
                     $(name).append(
                         $('<li>').append(
                             "[" + entry["timestamp"] +"]" +
-                            " Received \"" + entry["ciphertext"] + 
-                            "\" decrypted as \"" + entry["plaintext"] +
-                            "\" with key stream \"" + entry["keystream"] + "\""
+			    " Received <b>\"" + entry["ciphertext"] + 
+			    "\"</b> decrypted as <b>\"" + entry["plaintext"] +
+			    "\"</b> with key stream <b>\"" + entry["keystream"] + "\"</b>"
                     ));
                 } else {
                     $(name).append(
                         $('<li>').append(
                             "[" + entry["timestamp"] +"]" +
-                            " Sent \"" + entry["plaintext"] +
-                            "\" encrypted as \"" + entry["ciphertext"] +
-                            "\" with key stream \"" + entry["keystream"] + "\""
+			    " Sent <b>\"" + entry["plaintext"] +
+			    "\"</b> encrypted as <b>\"" + entry["ciphertext"] +
+			    "\"</b> with key stream <b>\"" + entry["keystream"] + "\"</b>"
                     ));
                }
             }
