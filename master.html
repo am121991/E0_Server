@@ -31,6 +31,7 @@
                     ));
                }
             }
+            $(name+"_box")[0].scrollTop = $(name+"_box")[0].scrollHeight;
         }
 
         function add_to_chat(name, log) {
@@ -50,6 +51,7 @@
                     ));
                }
             }
+            $(name+"_box")[0].scrollTop = $(name+"_box")[0].scrollHeight;
         }
 
         function setAddress(url, device) {
@@ -101,10 +103,7 @@
 				$("#CT_slave").text(data.ctslave);
 
                 add_to_log('#master_log', data.logs["device_1"]);
-                add_to_log('#slave_log', data.logs["device_2"]);
-
                 add_to_chat('#master_chat', data.logs["device_1"]);
-                add_to_chat('#slave_chat',  data.logs["device_2"]);
 			});
 		}
 		</script>
@@ -125,7 +124,9 @@
         
         <div id="chat_master"> 
             <h2>Master Chat</h2>
-            <ul id="master_chat"></ul>
+            <div id="master_chat_box"style="height:200px;width:80%;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+                <ul id="master_chat"></ul>
+            </div>
             Device 1 plaintext: 
             <input id="dev1_msg" type="text"
                 onkeydown="if (event.keyCode == 13) {sendMessage(this, 'master');}"/>
@@ -138,7 +139,9 @@
             
         <div id="log_master"> 
             <h2>Master Log</h2>
-            <ul id="master_log"></ul>
+            <div id="master_log_box"style="height:200px;width:80%;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+                <ul id="master_log"></ul>
+            </div>
         </div>
 
 		<hr />
