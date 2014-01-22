@@ -2,6 +2,7 @@
 <html>
     <head> 
         <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type">
+	<link href="css/bootstrap.css" rel="stylesheet">
         <script src="{{ jq }}"></script>
 		<script type="text/javascript">
 		$(document).ready(function(){
@@ -109,7 +110,17 @@
 		</script>
 	</head>
 	<body>
-        <h1>E0 State Monitor</h1>
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#"> E0 state monitor </a>
+			</div>
+			<div class="collapse navbar-collapse">
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<br><br><br><br>
             Device 1 URL: 
                 <input type="text" name="d1url" size="33" value="{{ device_1_Url }}" 
                     onchange="setAddress(this.value, 'd1url');"/>
@@ -151,5 +162,7 @@
             <p>Master BD_ADDR: <span id="ADDR_master" /></p>
             <p>Master CLK26: <span id="CLK_master" /></p>
         </div>
+	</div><!-- container -->
+	<script src="js/bootstrap.min.js"></script>
     </body>
 </html>

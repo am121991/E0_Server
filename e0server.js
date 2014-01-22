@@ -5,6 +5,7 @@ var qs = require('querystring');
 
 var app = express();
 var jq = 'jquery-1.7.2.js';
+app.use(express.static(__dirname + '/dist'));
 
 var logs = {
     "device_1" : [],
@@ -76,7 +77,7 @@ app.get('/master', function(req, res){
     }));
 });
 
-app.get('/sendPT', function(req, res){ //TODO send data to clients i.e. req.query.pt based on req.query.sendee
+app.get('/sendPT', function(req, res){
 	var url = "";
 	if (req.query.pt !== undefined){
 		if (req.query.sendee === "master"){
@@ -206,9 +207,9 @@ app.get('/data', function(req, res){
 	}
 });
 
-app.get('/' + jq, function(req, res){
-	res.sendfile('./' + jq);
-});
+//app.get('/' + jq, function(req, res){
+//	res.sendfile('./' + jq);
+//});
 
 app.post('/log', function(req, res) {
     var body = '';
