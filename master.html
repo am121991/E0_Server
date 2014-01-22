@@ -4,13 +4,21 @@
         <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type">
         <script src="{{ jq }}"></script>
 		<script type="text/javascript">
-		$(document).ready(function(){
+        var chat_count = 0;
+        var log_count = 0;
+            
+        $(document).ready(function(){
 			window.setInterval(getData, 1000);
 		});
 
         function add_to_log(name, log) {
-            $(name).empty();
             var len = log.length;
+
+            if (len == log_count) {
+                return;
+            }
+
+            $(name).empty();
             for (var i = 0; i < len; i++) {
                 entry = log[i];
                 if (entry["isReceiving"]) {
@@ -31,12 +39,18 @@
                     ));
                }
             }
+            log_count = len;
             $(name+"_box")[0].scrollTop = $(name+"_box")[0].scrollHeight;
         }
 
         function add_to_chat(name, log) {
-            $(name).empty();
             var len = log.length;
+            
+            if (len == chat_count) {
+                return;
+            }
+
+            $(name).empty();
             for (var i = 0; i < len; i++) {
                 entry = log[i];
                 if (entry["isReceiving"]) {
@@ -51,6 +65,7 @@
                     ));
                }
             }
+            chat_count = len;
             $(name+"_box")[0].scrollTop = $(name+"_box")[0].scrollHeight;
         }
 
