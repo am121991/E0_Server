@@ -2,7 +2,19 @@
 <html>
     <head> 
         <meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type">
-	<link href="css/bootstrap.css" rel="stylesheet">
+	    <link href="css/bootstrap.css" rel="stylesheet">
+        <style>
+            ul {
+                list-style:none;
+                padding-left: 2px;
+            }
+            .them {
+                color: blue;
+            }
+            .me {
+                color: red;
+            }
+        </style>
         <script src="{{ jq }}"></script>
 		<script type="text/javascript">
         var chat_count = 0;
@@ -57,12 +69,12 @@
                 if (entry["isReceiving"]) {
                     $(name).append(
                         $('<li>').append(
-                            "Him: " + entry["plaintext"] 
+                            "<span class='them'>Them:</span> " + entry["plaintext"] 
                     ));
                 } else {
                     $(name).append(
                         $('<li>').append(
-                            "Me: " + entry["plaintext"] 
+                            "<span class='me'>Me:</span> " + entry["plaintext"] 
                     ));
                }
             }
