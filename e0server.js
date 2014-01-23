@@ -150,11 +150,17 @@ app.get('/setAddress', function(req,res){
         }
 
         request(url1 + "/isMaster", function(error, response, body) {
-            console.log(body); 
-            if (body === "true") {
+            console.log("URL1: " + body); 
+            if ((body === "true") || (body === "True")) {
                 masterUrl = url1;
-            } else {
+            } else if ((body === "false") || (body === "False")) {
                 slaveUrl = url1;
+            }
+            if (req.query.silent !== undefined) {
+                res.send("Slave:  " + slaveUrl + "\n" 
+                       + "Master: " + masterUrl);
+            } else {
+                res.redirect("http://localhost:" + port);
             }
         });
 	}
@@ -170,21 +176,21 @@ app.get('/setAddress', function(req,res){
         }
 
         request(url2 + "/isMaster", function(error, response, body) {
-            console.log(body); 
-            if (body === "true") {
+            console.log("URL2: " + body); 
+            if ((body === "true") || (body === "True")) {
                 masterUrl = url2;
-            } else {
+            } else if ((body === "false") || (body === "False")) {
                 slaveUrl = url2;
+            }
+            if (req.query.silent !== undefined) {
+                res.send("Slave:  " + slaveUrl + "\n" 
+                       + "Master: " + masterUrl);
+            } else {
+                res.redirect("http://localhost:" + port);
             }
         });
 	}
 
-	if (req.query.silent !== undefined) {
-        res.send("Slave:  " + slaveUrl + "\n" 
-               + "Master: " + masterUrl);
-    } else {
-        res.redirect("http://localhost:" + port);
-    }
 });
 
 app.get('/data', function(req, res){
@@ -223,7 +229,8 @@ app.post('/log', function(req, res) {
     
         var log_entry = {}    
         log_entry["ciphertext"] = new Buffer(POST["ciphertext"], "base64").toString("hex");
-        log_entry["isReceiving"] = (POST["is_receiving"] == 'true')
+        log_entry["isReceiving"] = (POST["is_receiving"] == 'true' || 
+                                    POST["is_receiving"] == 'True')
         log_entry["keystream"] = new Buffer(POST["keystream"], "base64").toString("hex");
         log_entry["plaintext"] = POST["plaintext"];
         log_entry["timestamp"] = POST["timestamp"];
