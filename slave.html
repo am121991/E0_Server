@@ -155,7 +155,8 @@
 		<br>
             Device 2 Kc: 
             <input id="Kc2_in" type="text" size="33" name="d2kc" value="{{ KCSlave }}"
-                onkeyup="$('#Kc2_len').text(this.value.length);" 
+                onkeyup="$('#Kc2_len').text(this.value.length);
+                if (event.keyCode == 13) {setKc(this.value, 'd2kc');}" 
                 onchange="setKc(this.value, 'd2kc');"/>
             <span id="Kc2_len">{{Kc2_len}}</span> chars<br>
         
