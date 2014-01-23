@@ -150,6 +150,7 @@
 		<br><br><br><br>
             Device 2 URL: 
                 <input type="text" name="d2url" size="33" value="{{ device_2_Url }}" 
+                    onkeyup="if (event.keyCode == 13) {setAddress(this.value, 'd2url');}"
                     onchange="setAddress(this.value, 'd2url');" />
                 <br />
 		<br>
