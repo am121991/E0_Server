@@ -3,6 +3,8 @@ E0_Server
 
 Server for viewing state of E0 clients
 
+Goes with Edderick's E0_Go and E0_Python repos
+
 Interface for clients:
 
 domain:port/masterDetails?kcmaster=xyz&admaster=xyz&clmaster=xyz
